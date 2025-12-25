@@ -18,10 +18,7 @@ app.get("/health", (_, res) => {
 
 app.use("/api/v1/auth", authRoutes);
 
-// ================= Error Handling Middleware =================
-// يجب أن يكون هذا آخر `app.use`
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  // 1. إذا كان الخطأ معروفاً (ApiError)
   if (err instanceof ApiError) {
     return res.status(err.statusCode).json({
       success: false,
@@ -30,7 +27,6 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     });
   }
 
-  // 2. إذا كان الخطأ من Zod Validation
   if (err instanceof ZodError) {
     return res.status(400).json({
       success: false,
@@ -39,8 +35,7 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     });
   }
 
-  // 3. أخطاء غير متوقعة (Internal Server Error)
-  console.error(err); // سجل الخطأ في السيرفر
+  console.error(err);
   return res.status(500).json({
     success: false,
     message: "Internal Server Error",
